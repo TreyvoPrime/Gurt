@@ -1,0 +1,95 @@
+const typingBox = document.getElementById("typingBox")
+button = document.getElementById("testing")
+const WPM_stat = document.getElementById("WPM_stat")
+
+let SentenceBank = [
+    { text: "Hello, I am Gurt and I am super cool. Being a Gurt is so awesome and I would not want to change it for the world. I love being a gurt, gurt, gurt. SYBAU GURT" },
+    { text: "Greetings  I am not your Gurt you sneaky Gurty" }
+];
+
+function RandomSentence() {
+    const randomIndex = Math.floor(Math.random() * SentenceBank.length)
+    return SentenceBank[randomIndex].text;
+}
+
+const text = RandomSentence()
+const splitted_text = text.split("")
+
+typing_test = document.getElementById("typing_text")
+typing_test.textContent = text
+
+typingBox.addEventListener("input", () => {
+    const currentValue = typingBox.value; 
+
+    for (let i = 0; i < currentValue.length; i++) {
+        console.log(`Char ${i}: ${currentValue[i]}`)
+
+        let singular_letter = `${currentValue[i]}`;
+        console.log("my singular letter is", singular_letter)
+
+        if (currentValue[i] !== splitted_text[i]) {
+            console.log("That is the incorrect letter")
+        } else {
+            console.log("That is the correct letter")
+        }
+    }
+
+    // finish condition (no accuracy required)
+    if (currentValue.trim().length === text.trim().length) {
+        console.log("Finished typing");
+        console.log("Time taken:", timeUser, "seconds");
+
+        clearInterval(timerId);
+        clearInterval(countUpTimerId);
+
+        timerId = null;
+        countUpTimerId = null;
+
+        // calculate WPM
+        let wordsTyped = text.trim().split(" ").length;
+        let minutes = timeUser / 60;
+        let WPM = Math.round(wordsTyped / minutes);
+
+        console.log("WPM:", WPM);
+
+        window.location.href = "completion.html";
+    }
+})
+
+let timeLeft = 30;
+let timerId = null
+let timeUser = 0
+let countUpTimerId = null
+//countdown timer
+function myTimer() {
+    timeLeft--;
+    document.getElementById("wpm-display").textContent = timeLeft;
+
+    if (timeLeft <= 0) {
+        clearInterval(timerId);
+        clearInterval(countUpTimerId);
+
+        timerId = null;
+        countUpTimerId = null;
+
+        document.getElementById("wpm-display").textContent = "Typing test over";
+        window.location.href = "completion.html"
+    }
+}
+//user timer
+function userTimed() {
+    timeUser++;
+    console.log("Seconds typed:", timeUser)
+}
+
+typingBox.addEventListener("input", function () {
+    if (timerId === null) {
+        timerId = setInterval(myTimer, 1000);
+        countUpTimerId = setInterval(userTimed, 1000);
+        console.log("Timer started");
+    }
+}, { once: true }); 
+
+function display_results() {
+    WPM_stat.textContent = "gurt"
+}
